@@ -5,8 +5,11 @@ using UnityEngine;
 public class FollowCamera : MonoBehaviour
 {
     [SerializeField] GameObject target;
+    [SerializeField] float damping;
     Vector3 offset;
+    float currentAngle;
     float desiredAngle;
+    float angle;
     Quaternion rotation;
 
     private void Start() {
@@ -14,8 +17,10 @@ public class FollowCamera : MonoBehaviour
     }
 
     private void LateUpdate() {
+        currentAngle = transform.eulerAngles.y;
         desiredAngle = target.transform.eulerAngles.y;
-        rotation = Quaternion.Euler(0, desiredAngle, 0);
+        angle = Mathf.LerpAngle(currentAngle, desiredAngle, Time.deltaTime * damping);
+        rotation = Quaternion.Euler(0, angle, 0);
         transform.position = target.transform.position - (rotation * offset);
         transform.LookAt(target.transform);
     }
